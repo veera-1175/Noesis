@@ -1,89 +1,92 @@
-# Noesis Memory Engine
+# Noesis
 
-**A Semantic + Symbolic Distributed AI Memory Architecture**
+### Semantic-symbolic memory engine for persistent AI agents
 
-> The innovation is not *"AI remembers."*  
-> The innovation is **HOW** memory is represented, compressed, evolved, shared, and reconstructed.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/veera-1175/Noesis)
 
-[![Tests](https://img.shields.io/badge/tests-26%2B%20passing-brightgreen)](tests/)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://python.org)
-[![Phases](https://img.shields.io/badge/phases%201--5-complete-purple)](#all-features)
+> Compress memories into semantic packets, store them as a knowledge graph, sync across agents — then recall with hybrid search that beats raw chat history.
+
+Solo-built by **[Veerasegaran V P](https://github.com/veera-1175)** — an independent systems project on durable memory for LLM agents (not another chat wrapper).
 
 ---
 
-> **New to Noesis?** Read the full **[USER_GUIDE.md](USER_GUIDE.md)** — plain-language explanation, setup, dashboard, CLI, and presentation tips.
+## Why Noesis exists
 
-## Quick Start (60 seconds)
+Most agent stacks dump full transcripts into a vector DB and call it "memory." That wastes tokens, loses structure, and doesn't share state across agents.
+
+Noesis treats memory as an **engineered substrate**:
+
+| Layer | What it does |
+|-------|----------------|
+| **Semantic compression** | Clusters related turns into meaning packets |
+| **Symbolic encoding** | Tokenizes & packages memories for merge / sync |
+| **Knowledge graph** | Entities + relations for structured recall |
+| **Hybrid recall** | Graph + embedding similarity with confidence |
+| **Forgetting** | Decay + redundancy removal so the store stays sharp |
+| **Mesh sync** | Push / pull packets between peer Noesis nodes |
+
+Use it as a **Python library**, a **CLI**, a **FastAPI service** with dashboard, or a **LangChain-compatible** memory backend.
+
+---
+
+## Highlights
+
+- **`NoesisEngine`** — remember / recall / forget / export / peer sync
+- **`PersistentAgent`** — agent that accumulates context and suggests system-prompt injections for any LLM
+- **REST + live dashboard** — inspect graph, run chat, compare vs traditional dump
+- **Docker Compose** — single node or multi-agent profile
+- **SQLite-backed** — portable local store; easy to extend
+
+---
+
+## Table of contents
+
+1. [Quick start](#quick-start)
+2. [CLI](#cli)
+3. [Python API](#python-api)
+4. [REST API](#rest-api)
+5. [Docker](#docker)
+6. [Architecture snapshot](#architecture-snapshot)
+7. [Project structure](#project-structure)
+8. [Tests](#tests)
+9. [Interview walkthrough](#interview-walkthrough)
+10. [License](#license)
+
+---
+
+## Quick start
 
 ```powershell
-# Windows
-.\scripts\setup.ps1
-.\.venv\Scripts\Activate.ps1
-noesis serve
+git clone https://github.com/veera-1175/Noesis.git
+cd Noesis
+pip install -e ".[all]"
+noesis serve          # Dashboard → http://localhost:8080
 ```
 
-Open **http://localhost:8080** — interactive dashboard with knowledge graph, chat, and memory viewer.
+Minimal library use:
+
+```python
+from noesis import NoesisEngine
+
+engine = NoesisEngine()
+engine.remember("User prefers Redis for session caching under high write load")
+hits = engine.recall("session store choice", mode="hybrid")
+```
 
 ---
 
-## Five Innovations vs Traditional AI
+## CLI
 
-| # | Innovation | Traditional (ChatGPT/RAG) | Noesis |
-|---|------------|---------------------------|-----------|
-| 1 | **Semantic Compression** | Store full conversations | Store compressed insights |
-| 2 | **Symbolic Portable Memory** | Cloud embeddings only | Bytecode packets — transferable |
-| 3 | **Distributed Shared Memory** | Isolated agents | Mesh sync — collective intelligence |
-| 4 | **Knowledge Graph Recall** | Vector chunk similarity | Concept graph traversal |
-| 5 | **Adaptive Forgetting** | Accumulate forever | Decay + merge + prune |
-
----
-
-## Full Feature List
-
-### Core Engine (Phases 1–5)
-- Conversation / log / event ingestion
-- Semantic parsing, importance scoring, clustering
-- Memory hierarchy: episodic, semantic, procedural, insight
-- Knowledge graph (NetworkX) with associative recall
-- SentencePiece symbolic tokenization + msgpack bytecode
-- Portable memory packets + HTTP mesh sync
-- Adaptive forgetting + redundancy elimination
-- Predictive recall + memory evolution
-
-### Enhancements
-- **Web Dashboard** — graph visualization, chat, memory browser
-- **REST API** — FastAPI with OpenAPI docs at `/docs`
-- **Persistent Agent** — drop-in assistant with long-term memory
-- **LangChain adapter** — optional `NoesisMemory` backend
-- **Docker** — single-command deployment
-- **Presentation guide** — see [NOESIS_PRESENTATION.md](NOESIS_PRESENTATION.md)
-
----
-
-## Commands
-
-```powershell
-# Web dashboard + API
-noesis serve                    # http://localhost:8080
-noesis serve --port 9000
-
-# Memory operations
-noesis remember "User deployed Redis for FastAPI"
-noesis recall "backend scaling" --mode hybrid
-noesis explain-query "FastAPI Redis"
-noesis list
-noesis stats
-noesis forget-cycle
-
-# Distributed sync
-noesis mesh-serve --port 8765
+```bash
+noesis serve                      # FastAPI + dashboard
+noesis remember "fact or episode"
+noesis recall "query" --mode hybrid
 noesis sync-push http://peer:8765
 noesis sync-pull http://peer:8765
-
-# Demos
-noesis demo
-noesis innovation
-noesis multi-agent
+noesis demo                       # interactive demos
 noesis chat                       # terminal persistent agent
 ```
 
@@ -95,19 +98,16 @@ noesis chat                       # terminal persistent agent
 from noesis import NoesisEngine
 from noesis.agents import PersistentAgent
 
-# Low-level engine
 engine = NoesisEngine()
-engine.remember("User asked about Redis async scaling")
+engine.remember("Scaling discussion: async workers + Redis")
 contexts = engine.recall("backend scaling", mode="hybrid")
 engine.compare_with_traditional(["asked Redis", "asked workers", "asked scaling"])
-engine.export_memory(memory_id)
 engine.sync_from_peer("http://192.168.1.10:8765")
 
-# High-level persistent agent
 agent = PersistentAgent(agent_id="my-assistant")
-response = agent.chat("What do you know about my backend stack?")
-print(response["memory_context"])
-print(response["suggested_system_prompt"])  # inject into any LLM
+out = agent.chat("What do you know about my backend stack?")
+print(out["memory_context"])
+print(out["suggested_system_prompt"])  # inject into any LLM
 ```
 
 ---
@@ -117,14 +117,14 @@ print(response["suggested_system_prompt"])  # inject into any LLM
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/` | GET | Web dashboard |
-| `/docs` | GET | OpenAPI documentation |
+| `/docs` | GET | OpenAPI |
 | `/health` | GET | Health check |
 | `/remember` | POST | Store compressed memory |
-| `/recall` | POST | Hybrid graph+semantic recall |
+| `/recall` | POST | Hybrid graph + semantic recall |
 | `/chat` | POST | Remember + recall for assistants |
-| `/graph` | GET | Full knowledge graph |
+| `/graph` | GET | Knowledge graph |
 | `/memories` | GET | List compressed memories |
-| `/compare` | POST | Demo vs traditional storage |
+| `/compare` | POST | Noesis vs traditional dump |
 | `/forget` | POST | Forgetting cycle |
 
 ---
@@ -133,15 +133,33 @@ print(response["suggested_system_prompt"])  # inject into any LLM
 
 ```bash
 docker compose up --build
-# Dashboard at http://localhost:8080
+# http://localhost:8080
 
-# Multi-agent profile
 docker compose --profile multi-agent up
 ```
 
 ---
 
-## Project Structure
+## Architecture snapshot
+
+```mermaid
+flowchart LR
+  Input[Conversation / events] --> Compress[Semantic compression]
+  Compress --> Packets[Symbolic packets]
+  Packets --> Graph[(Knowledge graph)]
+  Packets --> Store[(SQLite)]
+  Query[Recall query] --> Hybrid[Hybrid scorer]
+  Graph --> Hybrid
+  Store --> Hybrid
+  Hybrid --> Context[Agent context]
+  Packets <--> Mesh[Peer mesh sync]
+```
+
+Deep dive: [ARCHITECTURE.md](ARCHITECTURE.md)
+
+---
+
+## Project structure
 
 ```
 noesis/
@@ -149,25 +167,18 @@ noesis/
 ├── semantic/       # Compression, clustering, evolution
 ├── symbolic/       # Tokenization, bytecode, packets
 ├── graph/          # Knowledge graph + recall
-├── sync/           # Mesh server/client, packet merge
+├── sync/           # Mesh server / client
 ├── forgetting/     # Decay, redundancy
 ├── recall/         # Predictive recall
-├── api/            # FastAPI + web dashboard
-├── agents/         # PersistentAgent, LangChain memory
+├── api/            # FastAPI + dashboard
+├── agents/         # PersistentAgent, LangChain bridge
 └── storage/        # SQLite
-
-examples/           # Demos (workflow, innovation, multi-agent, chat)
-scripts/            # setup.ps1, run_server.py
-NOESIS_PRESENTATION.md  # Demo & presentation guide
-ARCHITECTURE.md     # Technical deep dive
+examples/           # Demos
+scripts/            # setup / run helpers
 ```
 
----
-
-## Install Options
-
 ```powershell
-pip install -e .              # Core only
+pip install -e .              # Core
 pip install -e ".[api]"       # + Dashboard
 pip install -e ".[agents]"    # + LangChain
 pip install -e ".[all]"       # Everything
@@ -183,13 +194,21 @@ pytest tests/ -v
 
 ---
 
-## Documentation
+## Interview walkthrough
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — Technical innovation deep dive
-- [NOESIS_PRESENTATION.md](NOESIS_PRESENTATION.md) — Presentation & demo script
+| Topic | Point to |
+|-------|----------|
+| Why not “just embeddings”? | Compression + graph + forgetting — token-efficient, structured |
+| Multi-agent | Mesh sync of packets between peers |
+| Integration | Library, REST, LangChain memory, dashboard |
+| Tradeoffs | Local SQLite by default; scale path = external store / workers |
+
+Demo path: `noesis serve` → remember → recall → `/compare` → optional peer sync.
 
 ---
 
 ## License
 
-MIT — Noesis Memory Engine Project
+MIT © [Veerasegaran V P](https://github.com/veera-1175)
+
+**Noesis** — memory that agents can actually keep.
