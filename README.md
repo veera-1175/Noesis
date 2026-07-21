@@ -8,8 +8,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/veera-1175/Noesis)
 
 > Compress memories into semantic packets, store them as a knowledge graph, sync across agents — then recall with hybrid search that beats raw chat history.
-
-Built by **[Veera](https://github.com/veera-1175)**.
+> Built by [Veera](https://github.com/veera-1175).
 
 ---
 
