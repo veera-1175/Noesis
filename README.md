@@ -9,7 +9,7 @@
 
 > Compress memories into semantic packets, store them as a knowledge graph, sync across agents — then recall with hybrid search that beats raw chat history.
 
-Solo-built by **[Veerasegaran V P](https://github.com/veera-1175)** — an independent systems project on durable memory for LLM agents (not another chat wrapper).
+Built by **[veera](https://github.com/veera-1175)**.
 
 ---
 
@@ -209,6 +209,6 @@ Demo path: `noesis serve` → remember → recall → `/compare` → optional pe
 
 ## License
 
-MIT © [Veerasegaran V P](https://github.com/veera-1175)
+MIT © [veera](https://github.com/veera-1175)
 
 **Noesis** — memory that agents can actually keep.
